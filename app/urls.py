@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 
@@ -21,13 +21,13 @@ from django.conf import settings
 if settings.SITE_PREFIX:
 
     urlpatterns = [
-        url(r'^{}/'.format(settings.SITE_PREFIX), include('app_urls'),namespace='app'),
+        url(r'^{}/'.format(settings.SITE_PREFIX), include('app_urls')),
     ]
 
 else:
 
     urlpatterns = [
-        url(r'^', include('app_urls'), namespace='app'),
+        url(r'^', include('app_urls')),
     ]
 
 urlpatterns += staticfiles_urlpatterns()

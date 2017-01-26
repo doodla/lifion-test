@@ -48,11 +48,6 @@ coverage.xml
 *.mo
 *.pot
 
-# Django stuff:
-*.log
-logs/*
-media/*
-
 # Sphinx documentation
 docs/_build/
 
@@ -65,3 +60,5 @@ target/
 # Django Config
 *secret.py
 *development.py
+*dev_postgres.py
+*dev_sqlite.py
