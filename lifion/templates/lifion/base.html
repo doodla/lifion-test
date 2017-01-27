@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    {% load compress %}
+    <meta charset="UTF-8">
+    <title>Lifion</title>
+
+    {% compress css %}
+        <link rel="stylesheet" href="{% static 'lifion/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'lifion/css/base.css' %}">
+        {% block css %}
+        {% endblock %}
+    {% endcompress %}
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Lifion</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">Organizations</a></li>
+                <li><a href="#">Employees</a></li>
+                <li><a href="#">Surveys</a></li>
+                <li><a href="#">Results</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if request.user.is_authenticated %}
+                    <li><a href="#">Logout</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% block body %}
+{% endblock %}
+
+
+{% compress js %}
+    <script src="{% static 'lifion/js/jquery-3.1.1.min.js' %}"></script>
+    <script src="{% static 'lifion/js/bootstrap.min.js' %}"></script>
+
+    {% block js %}
+    {% endblock %}
+{% endcompress %}
+</body>
+</html>

@@ -17,8 +17,11 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
+import lifion.views as views
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', views.index, name='home'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

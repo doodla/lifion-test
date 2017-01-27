@@ -21,13 +21,13 @@ from django.conf import settings
 if settings.SITE_PREFIX:
 
     urlpatterns = [
-        url(r'^{}/'.format(settings.SITE_PREFIX), include('app_urls')),
+        url(r'^{}/'.format(settings.SITE_PREFIX), include('app.app_urls')),
     ]
 
 else:
 
     urlpatterns = [
-        url(r'^', include('app_urls')),
+        url(r'^', include('app.app_urls')),
     ]
 
 urlpatterns += staticfiles_urlpatterns()
