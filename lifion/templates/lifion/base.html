@@ -28,8 +28,8 @@
 
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#">Organizations</a></li>
+                <li><a href="#">Home</a></li>
+                <li{% if orgs %} class="active"{% endif %}><a href="{% url 'organizations' %}">Organizations</a></li>
                 <li><a href="#">Employees</a></li>
                 <li><a href="#">Surveys</a></li>
                 <li><a href="#">Results</a></li>

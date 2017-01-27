@@ -1,0 +1,105 @@
+{% extends 'lifion/base.html' %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'lifion/css/organizations.css' %}">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-xs-12">
+                <h1>Manage Organizations</h1>
+            </div>
+
+            <div class="col-md-offset-10 col-xs-offset-8" style="margin-bottom: 10%">
+
+                <button id="add_org" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Add Organization
+                </button>
+
+            </div>
+
+            <div id="add_form" class="col-xs-12 hidden">
+                <form method="post" action="{% url 'organizations' %}" class="form-horizontal">
+                    {% csrf_token %}
+                    <fieldset>
+                        <div class="form-group">
+                            <label for="name" class="col-lg-2 control-label">Organization Name</label>
+                            <div class="col-lg-10">
+                                <input type="text" class="form-control" name="name" placeholder="Name" autocomplete="off"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-lg-offset-2">
+                                <div id="cancel" class="btn btn-default">Cancel</div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <input type="hidden" name="action" value="add">
+                </form>
+            </div>
+            {% if organizations %}
+                <div class="col-xs-12">
+                    <table class="table table-striped table-hover table-responsive">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Number of Employees</th>
+                            <th>Manage</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for organization in organizations %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ organization.name }}</td>
+                                <td>{{ organization.employees.count }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'organizations' %}">
+                                        {% csrf_token %}
+                                        <div>
+                                            <button class="btn btn-danger" type="submit"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                        <input type="hidden" name="id" value="{{ organization.id }}">
+                                        <input type="hidden" name="action" value="delete">
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="col-xs-12 text-center">
+                    <h3><u>Get started by Adding an Organization</u></h3>
+                </div>
+            {% endif %}
+
+        </div>
+
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+
+        $(document).ready(function () {
+
+            $("#add_org").click(function () {
+                $("#add_form").show();
+
+            });
+
+            $("#cancel").click(function () {
+                $("#add_form").hide();
+            });
+
+        })
+    </script>
+{% endblock %}

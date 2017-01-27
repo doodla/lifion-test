@@ -22,6 +22,7 @@ import lifion.views as views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index, name='home'),
+    url(r'^organizations$', views.organizations, name='organizations'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

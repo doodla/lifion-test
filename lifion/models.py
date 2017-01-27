@@ -49,7 +49,7 @@ class LifionUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(blank=True, max_length=140, null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    organization = models.ForeignKey(Organization, on_delete=CASCADE)
+    organization = models.ForeignKey(Organization, on_delete=CASCADE, related_name='employees')
 
     objects = LifionUserManager()
 
