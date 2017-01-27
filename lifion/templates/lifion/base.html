@@ -29,19 +29,33 @@
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav">
                 <li><a href="#">Home</a></li>
-                <li{% if orgs %} class="active"{% endif %}><a href="{% url 'organizations' %}">Organizations</a></li>
-                <li><a href="#">Employees</a></li>
-                <li><a href="#">Surveys</a></li>
-                <li><a href="#">Results</a></li>
+                {% if not request.user.is_authenticated %}
+                    <li{% if orgs %} class="active"{% endif %}><a href="{% url 'organizations' %}">Organizations</a></li>
+                    <li{% if emps %} class="active"{% endif %}><a href="{% url 'employees' %}">Employees</a></li>
+                {% else %}
+                    <li{% if survey %} class="active"{% endif %}><a href="{% url 'survey' %}">Surveys</a></li>
+                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if request.user.is_authenticated %}
-                    <li><a href="#">Logout</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% endif %}
             </ul>
         </div>
     </div>
 </nav>
+
+{% if messages %}
+    <div class="container">
+        {% for message in messages %}
+            <div class="alert alert-dismissible {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <h4>{{ message.tags|capfirst }}!</h4>
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 
 {% block body %}
 {% endblock %}

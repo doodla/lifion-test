@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='lifionuser',
             name='organization',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='employees', to='lifion.Organization'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='manage_employees', to='lifion.Organization'),
         ),
     ]

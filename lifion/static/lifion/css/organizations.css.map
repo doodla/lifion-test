@@ -1,7 +1,0 @@
-{
-"version": 3,
-"mappings": "AAAA;wBACyB;EACvB,OAAO,EAAE,MAAM;;AAGjB,sBAAuB;EACrB,OAAO,EAAE,MAAM;EACf,cAAc,EAAE,MAAM;;AAGxB,MAAO;EACL,YAAY,EAAE,KAAK;EAEnB,oBAAO;IACL,UAAU,EAAE,MAAM",
-"sources": ["organizations.scss"],
-"names": [],
-"file": "organizations.css"
-}

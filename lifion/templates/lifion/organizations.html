@@ -1,7 +1,16 @@
 {% extends 'lifion/base.html' %}
 {% load static %}
 {% block css %}
-    <link rel="stylesheet" href="{% static 'lifion/css/organizations.css' %}">
+    <style>
+        .table {
+            table-layout: fixed;
+        }
+
+        .table th, .table tr {
+            text-align: center;
+        }
+
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -20,7 +29,7 @@
 
             </div>
 
-            <div id="add_form" class="col-xs-12 hidden">
+            <div id="add_form" class="col-xs-12 collapse">
                 <form method="post" action="{% url 'organizations' %}" class="form-horizontal">
                     {% csrf_token %}
                     <fieldset>
@@ -61,10 +70,8 @@
                                 <td>
                                     <form method="post" action="{% url 'organizations' %}">
                                         {% csrf_token %}
-                                        <div>
                                             <button class="btn btn-danger" type="submit"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                             </button>
-                                        </div>
                                         <input type="hidden" name="id" value="{{ organization.id }}">
                                         <input type="hidden" name="action" value="delete">
                                     </form>
