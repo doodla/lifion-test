@@ -71,6 +71,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
+AUTH_USER_MODEL = 'lifion.LifionUser'
+
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 

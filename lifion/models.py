@@ -2,6 +2,14 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
+from django.db.models import CASCADE
+
+
+class Organization(models.Model):
+    name = models.CharField(max_length=30, default='')
+
+    def __str__(self):
+        return self.name
 
 
 class LifionUserManager(BaseUserManager):
@@ -36,16 +44,21 @@ class LifionUserManager(BaseUserManager):
 
 
 class LifionUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(blank=True, max_length=140, null=True)
+    username = models.CharField(max_length=140, unique=True)
     first_name = models.CharField(blank=True, max_length=140, null=True)
     last_name = models.CharField(blank=True, max_length=140, null=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    organization = models.ForeignKey(Organization, on_delete=CASCADE)
 
     objects = LifionUserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    @property
+    def full_name(self):
+        return self.get_full_name()
 
     def get_short_name(self):
         return self.first_name
@@ -66,3 +79,60 @@ class LifionUser(AbstractBaseUser, PermissionsMixin):
         db_table = "users"
         verbose_name = "User"
         verbose_name_plural = "Users"
+
+
+class QuestionBank(models.Model):
+    organization = models.OneToOneField(Organization, related_name='question_bank', on_delete=CASCADE)
+
+    class Meta:
+        db_table = "question_bank"
+        verbose_name = "Question Bank"
+        verbose_name_plural = "Question Banks"
+
+
+class Question(models.Model):
+    text = models.CharField(max_length=300, default='')
+    bank = models.ForeignKey(QuestionBank, related_name='questions', blank=True, null=True)
+
+    class Meta:
+        db_table = "question"
+        verbose_name = "Question"
+        verbose_name_plural = "Questions"
+
+
+class Option(models.Model):
+    text = models.CharField(max_length=100, default='')
+    value = models.IntegerField(default=1)
+    question = models.ForeignKey(Question, related_name='options')
+
+    class Meta:
+        db_table = "option"
+
+
+class Survey(models.Model):
+    user = models.ForeignKey(LifionUser, related_name='surveys', on_delete=CASCADE)
+    organization = models.ForeignKey(Organization, related_name='surveys', on_delete=CASCADE)
+    questions = models.ManyToManyField(Question)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "survey"
+
+
+class Submission(models.Model):
+    survey = models.ForeignKey(Survey, on_delete=CASCADE, related_name='submissions')
+    user = models.ForeignKey(LifionUser, on_delete=CASCADE, blank=True, null=True)
+    comment = models.TextField(default='')
+    score = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def by(self):
+
+        if self.user is None:
+            return 'Anonymous'
+        else:
+            return self.user.full_name
+
+    class Meta:
+        db_table = "submission"
