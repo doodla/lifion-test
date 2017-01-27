@@ -114,6 +114,7 @@ class Survey(models.Model):
     organization = models.ForeignKey(Organization, related_name='surveys', on_delete=CASCADE)
     questions = models.ManyToManyField(Question)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_open = models.BooleanField(default=True)
 
     class Meta:
         db_table = "survey"
@@ -125,11 +126,12 @@ class Submission(models.Model):
     comment = models.TextField(default='')
     score = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    anonymous = models.BooleanField(default=False)
 
     @property
     def by(self):
 
-        if self.user is None:
+        if self.anonymous:
             return 'Anonymous'
         else:
             return self.user.full_name

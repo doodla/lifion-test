@@ -22,10 +22,11 @@ import lifion.views as views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index, name='home'),
-    url(r'^logout$', views.logout_user, name='logout'),
-    url(r'^organizations$', views.manage_organizations, name='organizations'),
-    url(r'^employees', views.manage_employees, name='employees'),
-    url(r'^survey', views.manage_employees, name='survey'),
+    url(r'^logout[/]$', views.logout_user, name='logout'),
+    url(r'^organizations[/]$', views.manage_organizations, name='organizations'),
+    url(r'^employees[/]$', views.manage_employees, name='employees'),
+    url(r'^survey[/]$', views.manage_surveys, name='survey'),
+    url(r'^survey/create', views.create_survey, name='create_survey'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

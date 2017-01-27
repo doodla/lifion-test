@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
 
-from lifion.models import Organization, LifionUser
+from lifion.models import Organization, LifionUser, Survey
 
 
 def index(request):
@@ -18,16 +18,6 @@ def record_response(request, survey_id):
 
 def manage_question_bank(request):
     pass
-
-
-def register(request):
-    pass
-
-
-def logout_user(request):
-    logout(request)
-    messages.success(request, 'Logged Out!')
-    return redirect('employees')
 
 
 def manage_organizations(request):
@@ -47,10 +37,13 @@ def manage_organizations(request):
             organization.delete()
 
     orgs = Organization.objects.all()
-    return render(request, 'lifion/organizations.html', {
-        'organizations': orgs,
-        'orgs': True
-    })
+
+    if not request.user.is_authenticated:
+        return render(request, 'lifion/organizations.html', {
+            'organizations': orgs,
+            'orgs': True
+        })
+    return redirect('home')
 
 
 def manage_employees(request):
@@ -96,3 +89,42 @@ def manage_employees(request):
             'emps': True
         })
     return redirect('home')
+
+
+def manage_surveys(request):
+    if request.user.is_authenticated:
+
+        user = request.user
+
+        organization = request.user.organization
+
+        user_surveys = Survey.objects.filter(user=user)
+
+        other_surveys = Survey.objects.filter(organization=organization, is_open=True).exclude(user=user)
+
+        return render(request, 'lifion/survey/manage.html', {
+            'user_surveys': user_surveys,
+            'other_surveys': other_surveys,
+            'surves': True
+        })
+    else:
+        return redirect('home')
+
+
+def create_survey(request):
+    if request.user.is_authenticated:
+        return render(request, 'lifion/survey/create.html', {
+            'surves': True
+        })
+    else:
+        return redirect('home')
+
+
+def create_question(request):
+    pass
+
+
+def logout_user(request):
+    logout(request)
+    messages.success(request, 'Logged Out!')
+    return redirect('employees')

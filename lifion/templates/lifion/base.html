@@ -33,7 +33,7 @@
                     <li{% if orgs %} class="active"{% endif %}><a href="{% url 'organizations' %}">Organizations</a></li>
                     <li{% if emps %} class="active"{% endif %}><a href="{% url 'employees' %}">Employees</a></li>
                 {% else %}
-                    <li{% if survey %} class="active"{% endif %}><a href="{% url 'survey' %}">Surveys</a></li>
+                    <li{% if surves %} class="active"{% endif %}><a href="{% url 'survey' %}">Surveys</a></li>
                 {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
