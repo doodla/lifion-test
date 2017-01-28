@@ -1,5 +1,7 @@
 {% extends 'lifion/base.html' %}
 {% load static %}
+{% load lifion_extras %}
+
 {% block css %}
     <style>
 
@@ -33,7 +35,7 @@
                                 <th>Status</th>
                                 <th># of Responses</th>
                                 <th>Manage</th>
-                                <th></th>
+                                <th>Responses</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -42,13 +44,16 @@
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{ survey.created_at }}</td>
                                     <td>{% if survey.is_open %}Open{% else %}Closed{% endif %}</td>
-                                    <td>{{ survey.responses.count }}</td>
+                                    <td>{{ survey.submissions.count }}</td>
                                     <td>
-                                        <a href="#" class="btn"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></a>
-                                        <a href="#" class="btn"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></a>
+                                        {% if survey.is_open %}
+                                            <a href="{% url 'close_survey' %}" class="btn btn-danger">Close Survey</a>
+                                        {% endif %}
+                                        <a href="{% url 'delete_survey' survey_id=survey.id %}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"
+                                                                                                                             aria-hidden="true"></span></a>
                                     </td>
                                     <td>
-                                        <a href="#" class="btn"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span></a>
+                                        <a href="#" class="btn btn-info"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -80,7 +85,11 @@
                                     <td>{{ survey.created_at }}</td>
                                     <td>{{ survey.user.full_name }}</td>
                                     <td>
-                                        <a href="#" class="btn btn-info btn-block">Take Survey</a>
+                                        {% if not request.user|has_submission:survey %}
+                                            <a href="{% url 'take_survey' survey_id=survey.id %}" class="btn btn-info btn-block">Take Survey</a>
+                                        {% else %}
+                                            Submitted
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}

@@ -1,0 +1,100 @@
+{% extends 'lifion/base.html' %}
+{% load static %}
+{% block css %}
+    <style>
+
+    </style>
+{% endblock %}
+
+
+{% block body %}
+    <div class="container">
+
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>Take Survey</h1>
+            </div>
+
+            <form method="post" action="{% url 'take_survey' survey_id=survey.id %}" class="form-horizontal">
+                {% csrf_token %}
+
+                <div class="col-xs-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Survey Questions</h3>
+                        </div>
+                        <div class="panel-body">
+                            {% for question in survey.questions.all %}
+
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="well">
+                                            {{ question.text }}
+                                        </div>
+                                        <div class="col-xs-12">
+
+                                            {% with forloop.counter as count %}
+                                                {% for option in question.options.all %}
+
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="options[{{ count }}]" value="{{ option.value }}" checked="">
+                                                            {{ option.text }}
+                                                        </label>
+                                                    </div>
+
+                                                {% endfor %}
+                                            {% endwith %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="form-group">
+                                <label for="textArea" class="col-lg-12">Comment</label>
+                                <div class="col-lg-12">
+                                    <textarea class="form-control" name="comment" rows="3" id="textArea"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary">Submit Response</button>
+                    <div class="form-group">
+                        <div class="col-lg-10">
+                            <div class="checkbox">
+                                <label> <input type="checkbox" name="anonymous" value=""> Submit Anonymously </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input id="score" name="score" type="hidden" value="">
+            </form>
+
+
+        </div>
+        <div style="height: 100px"></div>
+
+    </div>
+{% endblock %}
+
+{% block js %}
+
+    <script>
+        $('form').submit(function () {
+
+            var sum = 0;
+            $('input[type="radio"]:checked').each(function () {
+
+                sum += parseInt($(this).val())
+
+            });
+
+            $("#score").val(sum);
+
+
+            return true;
+
+        })
+    </script>
+{% endblock %}

@@ -4,14 +4,14 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-from lifion.models import Organization, LifionUser, Survey, Question, Option
+from lifion.models import Organization, LifionUser, Survey, Question, Option, Submission
 
 
 def index(request):
     if request.user.is_authenticated:
         pass
 
-    return render(request, 'lifion/index.html')
+    return render(request, 'lifion/index.html', {'home': True})
 
 
 def record_response(request, survey_id):
@@ -93,7 +93,7 @@ def manage_employees(request):
     return redirect('home')
 
 
-def manage_surveys(request):
+def view_surveys(request):
     if request.user.is_authenticated:
 
         user = request.user
@@ -104,10 +104,48 @@ def manage_surveys(request):
 
         other_surveys = Survey.objects.filter(organization=organization, is_open=True).exclude(user=user)
 
-        return render(request, 'lifion/survey/manage.html', {
+        return render(request, 'lifion/survey/view.html', {
             'user_surveys': user_surveys,
             'other_surveys': other_surveys,
             'surves': True
+        })
+    else:
+        return redirect('home')
+
+
+def take_survey(request, survey_id):
+    if request.user.is_authenticated:
+
+        survey = Survey.objects.get(id=survey_id)
+
+        if request.method == 'POST':
+            score = request.POST.get('score')
+            comment = request.POST.get('comment')
+            check = request.POST.get('anonymous', None)
+
+            if check is not None:
+                anonymous = True
+            else:
+                anonymous = False
+
+            Submission.objects.create(user=request.user,
+                                      survey=survey,
+                                      anonymous=anonymous,
+                                      score=score,
+                                      comment=comment)
+
+            messages.success(request, 'Response submitted.')
+            return redirect('survey')
+
+        submission = Submission.objects.filter(survey=survey, user=request.user).first()
+
+        if submission is not None:
+            messages.error(request, 'You\'ve already submitted your response to this survey!')
+            return redirect('survey')
+
+        return render(request, 'lifion/survey/take.html', {
+            'survey': survey,
+            'surves': True,
         })
     else:
         return redirect('home')
@@ -118,17 +156,17 @@ def create_survey(request):
 
         user = request.user
         if request.method == 'POST':
-            questions = request.POST.getlist('questions')
+            questions = request.POST.get('questions')
 
             survey = Survey.objects.create(
                 user=user,
                 organization=user.organization,
             )
 
-            for pk in questions:
-                question = Question.objects.get(id=pk)
-
+            for pk in questions.split(','):
+                question = Question.objects.get(id=int(pk))
                 survey.questions.add(question)
+                survey.save()
 
             return redirect('survey')
 
@@ -162,6 +200,24 @@ def delete_survey(request, survey_id):
         return redirect('home')
 
 
+def close_survey(request):
+    if request.user.is_authenticated:
+
+        survey = Survey.objects.filter(user=request.user, is_open=True).first()
+
+        if survey is not None:
+            survey.is_open = False
+            survey.save()
+            messages.success(request, 'Successfully closed survey.')
+        else:
+            messages.error(request, 'Open Survey not found!')
+
+        return redirect('survey')
+
+    else:
+        return redirect('home')
+
+
 @require_POST
 def create_question(request):
     q_text = request.POST.get('q_text')
@@ -173,7 +229,7 @@ def create_question(request):
 
     for text, value in zip(texts, values):
         Option.objects.create(text=text,
-                              value=value,
+                              value=int(value),
                               question=question)
 
     return JsonResponse({

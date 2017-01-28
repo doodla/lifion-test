@@ -129,7 +129,6 @@ $(document).ready(function () {
 
             $questionArr.val(arr);
 
-
             insertQuestion();
 
             $("#create_survey").show();

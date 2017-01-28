@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <title>Lifion</title>
 
+    <link rel="icon" href="{% static 'lifion/assets/favicon.ico' %}">
+
     {% compress css %}
         <link rel="stylesheet" href="{% static 'lifion/css/bootstrap.min.css' %}">
         <link rel="stylesheet" href="{% static 'lifion/css/base.css' %}">
@@ -28,7 +30,7 @@
 
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="nav navbar-nav">
-                <li><a href="#">Home</a></li>
+                <li{% if home %} class="active"{% endif %}><a href="{% url 'home' %}">Home</a></li>
                 {% if not request.user.is_authenticated %}
                     <li{% if orgs %} class="active"{% endif %}><a href="{% url 'organizations' %}">Organizations</a></li>
                     <li{% if emps %} class="active"{% endif %}><a href="{% url 'employees' %}">Employees</a></li>
@@ -37,9 +39,12 @@
                 {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
+
                 {% if request.user.is_authenticated %}
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    <li><a href="#!">{{ request.user.full_name }}</a></li>
+                    <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp; Logout</a></li>
                 {% endif %}
+
             </ul>
         </div>
     </div>

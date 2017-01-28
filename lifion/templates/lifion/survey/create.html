@@ -111,7 +111,7 @@
                 <form method="post" action="{% url 'create_survey' %}" class="form-horizontal">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Create</button>
-                    <input id="questionArr" type="hidden" name="questions[]" value="">
+                    <input id="questionArr" type="hidden" name="questions" value="">
                 </form>
             </div>
 
