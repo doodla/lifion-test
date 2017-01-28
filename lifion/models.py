@@ -67,7 +67,7 @@ class LifionUser(AbstractBaseUser, PermissionsMixin):
         return '{} {}'.format(self.first_name, self.last_name)
 
     def __str__(self):  # __unicode__ on Python 2
-        return self.email
+        return self.username
 
     @property
     def is_staff(self):
@@ -112,7 +112,7 @@ class Option(models.Model):
 class Survey(models.Model):
     user = models.ForeignKey(LifionUser, related_name='surveys', on_delete=CASCADE)
     organization = models.ForeignKey(Organization, related_name='surveys', on_delete=CASCADE)
-    questions = models.ManyToManyField(Question)
+    questions = models.ManyToManyField(Question, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_open = models.BooleanField(default=True)
 

@@ -26,7 +26,9 @@ urlpatterns = [
     url(r'^organizations[/]$', views.manage_organizations, name='organizations'),
     url(r'^employees[/]$', views.manage_employees, name='employees'),
     url(r'^survey[/]$', views.manage_surveys, name='survey'),
-    url(r'^survey/create', views.create_survey, name='create_survey'),
+    url(r'^survey/create[/]]', views.create_survey, name='create_survey'),
+    url(r'^survey/delete/(?P<survey_id>[0-9]+)$', views.delete_survey, name='delete_survey'),
+    url(r'^questions/create', views.create_question, name='create_question'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
