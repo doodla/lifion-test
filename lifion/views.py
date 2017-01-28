@@ -1,8 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.db.models import Sum
+from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
 from lifion.models import Organization, LifionUser, Survey, Question, Option, Submission
@@ -94,21 +96,24 @@ def manage_employees(request):
     return redirect('home')
 
 
-def view_surveys(request):
+def manage_surveys(request):
     if request.user.is_authenticated:
 
         user = request.user
 
         organization = request.user.organization
 
-        user_surveys = Survey.objects.filter(user=user)
+        user_surveys = Survey.objects.filter(user=user).annotate(score=Sum('submissions__score'))
 
         other_surveys = Survey.objects.filter(organization=organization, is_open=True).exclude(user=user)
 
-        return render(request, 'lifion/survey/view.html', {
+        total = user_surveys.aggregate(Sum('score')).get('score__sum', 0)
+
+        return render(request, 'lifion/survey/manage.html', {
             'user_surveys': user_surveys,
             'other_surveys': other_surveys,
-            'surves': True
+            'total': total,
+            'surves': True,
         })
     else:
         return redirect('home')
@@ -150,6 +155,15 @@ def take_survey(request, survey_id):
         })
     else:
         return redirect('home')
+
+
+def view_survey(request, survey_id):
+    survey = Survey.objects.filter(id=survey_id).first()
+
+    if survey is not None:
+        html = render_to_string('lifion/survey/view.html', {'survey': survey})
+        return HttpResponse(html)
+
 
 
 def create_survey(request):
