@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^survey/create[/]$', views.create_survey, name='create_survey'),
     url(r'^survey/delete/(?P<survey_id>[0-9]+)$', views.delete_survey, name='delete_survey'),
     url(r'^survey/take/(?P<survey_id>[0-9]+)[/]$', views.take_survey, name='take_survey'),
+    url(r'^survey/response/(?P<survey_id>[0-9]+)[/]$', views.survey_response, name='survey_responses'),
     url(r'^survey/close[/]$', views.close_survey, name='close_survey'),
     url(r'^questions/create[/]$', views.create_question, name='create_question'),
 ]

@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
@@ -191,6 +192,30 @@ def delete_survey(request, survey_id):
         if survey is not None:
             survey.delete()
             messages.success(request, 'Successfully deleted survey.')
+        else:
+            messages.error(request, 'Survey not found!')
+
+        return redirect('survey')
+
+    else:
+        return redirect('home')
+
+
+def survey_response(request, survey_id):
+    if request.user.is_authenticated:
+
+        survey = Survey.objects.filter(id=survey_id).first()
+
+        total = survey.submissions.aggregate(Sum('score')).get('score__sum', 0)
+
+        if survey is not None:
+
+            return render(request, 'lifion/survey/response.html', {
+                'surves': True,
+                'survey': survey,
+                'total': total
+            })
+
         else:
             messages.error(request, 'Survey not found!')
 
