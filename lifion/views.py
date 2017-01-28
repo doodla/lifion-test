@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.db.models import Sum
@@ -103,7 +105,15 @@ def manage_surveys(request):
 
         organization = request.user.organization
 
-        user_surveys = Survey.objects.filter(user=user).annotate(score=Sum('submissions__score'))
+        start = request.GET.get('start', None)
+        end = request.GET.get('end', None)
+
+        if start is not None:
+            start = datetime.strptime(start, '%m-%d-%Y %H:%M')
+            end = datetime.strptime(end, '%m-%d-%Y %H:%M')
+            user_surveys = Survey.objects.filter(user=user, created_at__gte=start, created_at__lte=end).annotate(score=Sum('submissions__score'))
+        else:
+            user_surveys = Survey.objects.filter(user=user).annotate(score=Sum('submissions__score'))
 
         other_surveys = Survey.objects.filter(organization=organization, is_open=True).exclude(user=user)
 
@@ -163,7 +173,6 @@ def view_survey(request, survey_id):
     if survey is not None:
         html = render_to_string('lifion/survey/view.html', {'survey': survey})
         return HttpResponse(html)
-
 
 
 def create_survey(request):
