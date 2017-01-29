@@ -1,0 +1,30 @@
+{% load static %}
+{% load lifion_extras %}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Survey Questions</h3>
+            </div>
+            <div class="panel-body">
+                {% for response in submission.responses.all %}
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="well">
+                                {{ response.question.text }}
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" disabled checked>
+                                        {{ response.option.text }} [{{ response.option.value }}]
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

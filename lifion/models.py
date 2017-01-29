@@ -103,7 +103,7 @@ class Question(models.Model):
 class Option(models.Model):
     text = models.CharField(max_length=100, default='')
     value = models.IntegerField(default=1)
-    question = models.ForeignKey(Question, related_name='options')
+    question = models.ForeignKey(Question, related_name='options', on_delete=CASCADE)
 
     class Meta:
         db_table = "option"
@@ -140,3 +140,12 @@ class Submission(models.Model):
 
     class Meta:
         db_table = "submission"
+
+
+class QuestionResponse(models.Model):
+    option = models.ForeignKey(Option, on_delete=CASCADE)
+    question = models.ForeignKey(Question, on_delete=CASCADE)
+    submission = models.ForeignKey(Submission, related_name='responses', on_delete=CASCADE)
+
+    class Meta:
+        db_table = "question_response"

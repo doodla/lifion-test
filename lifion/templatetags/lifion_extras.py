@@ -13,3 +13,8 @@ def has_submission(user, survey):
         return False
     else:
         return True
+
+
+@register.filter
+def was_checked(option, submission):
+    pass

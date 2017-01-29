@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
-from lifion.models import Organization, LifionUser, Survey, Question, Option, Submission, QuestionBank
+from lifion.models import Organization, LifionUser, Survey, Question, Option, Submission, QuestionBank, QuestionResponse
 
 
 def index(request):
@@ -19,10 +19,6 @@ def index(request):
         pass
 
     return render(request, 'lifion/index.html', {'home': True})
-
-
-def record_response(request, survey_id):
-    pass
 
 
 def manage_organizations(request):
@@ -113,7 +109,7 @@ def manage_surveys(request):
         else:
             user_surveys = Survey.objects.filter(user=user).annotate(avg=Avg('submissions__avg'))
 
-        other_surveys = user.requested_surveys.filter(is_open=True)
+        other_surveys = user.requested_surveys.filter()
 
         total = user_surveys.aggregate(Avg('avg')).get('avg__avg', 0)
 
@@ -136,20 +132,27 @@ def take_survey(request, survey_id):
             score = request.POST.get('score')
             comment = request.POST.get('comment')
             check = request.POST.get('anonymous', None)
+            options = request.POST.get('options').split(',')
+            questions = request.POST.get('questions').split(',')
 
-            avg = Decimal(score) / Decimal(survey.questions.all().count())
+            avg = Decimal(score) / Decimal(len(questions))
 
             if check is not None:
                 anonymous = True
             else:
                 anonymous = False
 
-            Submission.objects.create(user=request.user,
-                                      survey=survey,
-                                      anonymous=anonymous,
-                                      score=score,
-                                      avg=avg,
-                                      comment=comment, )
+            submission = Submission.objects.create(user=request.user,
+                                                   survey=survey,
+                                                   anonymous=anonymous,
+                                                   score=score,
+                                                   avg=avg,
+                                                   comment=comment)
+
+            for pq, po in zip(questions, options):
+                QuestionResponse.objects.create(submission=submission,
+                                                option=Option.objects.get(id=int(po)),
+                                                question=Question.objects.get(id=int(pq)))
 
             messages.success(request, 'Response submitted.')
             return redirect('survey')
@@ -173,6 +176,16 @@ def view_survey(request, survey_id):
 
     if survey is not None:
         html = render_to_string('lifion/survey/view.html', {'survey': survey})
+        return HttpResponse(html)
+
+
+def view_response(request, survey_id, submission_id):
+    survey = Survey.objects.filter(id=survey_id).first()
+
+    submission = Submission.objects.get(id=submission_id)
+    if survey is not None:
+        html = render_to_string('lifion/survey/response_view.html', {'survey': survey,
+                                                                     'submission': submission})
         return HttpResponse(html)
 
 
@@ -251,7 +264,7 @@ def survey_response(request, survey_id):
                 'surves': True,
                 'survey': survey,
                 'total': total,
-                'avg' : avg
+                'avg': avg
             })
 
         else:

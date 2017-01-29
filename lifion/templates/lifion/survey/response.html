@@ -34,6 +34,7 @@
                                 <th>Submitted By</th>
                                 <th>Submitted At</th>
                                 <th>Comment</th>
+                                <th>View Response</th>
                                 <th>Score</th>
                                 <th>Avg</th>
                             </tr>
@@ -45,21 +46,22 @@
                                     <td>{{ response.by }}</td>
                                     <td>{{ response.created_at }}</td>
                                     <td>{{ response.comment }}</td>
+                                    <td><a href="#!" class="viewResponseBtn btn btn-info" data-id="{{ response.id }}">View</a></td>
                                     <td>{{ response.score }}</td>
                                     <td>{{ response.avg }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
-                        <tfoot>
-                        <tr>
-                            <td>Total</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><strong>{{ total }}</strong></td>
-                            <td><strong>{{ avg }}</strong></td>
-                        </tr>
-                        </tfoot>
+                            <tfoot>
+                            <tr>
+                                <td>Total</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>{{ total }}</strong></td>
+                                <td><strong>{{ avg }}</strong></td>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -67,9 +69,43 @@
         </div>
 
     </div>
+
+    <div class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">View Response</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block js %}
     <script>
+
+        $('.viewResponseBtn').click(function () {
+
+            var url = '{% url 'view_response' survey_id=survey.id submission_id=0 %}';
+            var id = $(this).data('id');
+
+            url = url.replace('/0', '/' + id);
+
+            $.get(url, function (data) {
+                $('.modal-body').html(data);
+            });
+
+
+            $('.modal').modal('show');
+
+
+        });
     </script>
 {% endblock %}

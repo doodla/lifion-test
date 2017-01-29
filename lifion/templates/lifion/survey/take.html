@@ -38,7 +38,9 @@
 
                                                     <div class="radio">
                                                         <label>
-                                                            <input type="radio" name="options[{{ count }}]" value="{{ option.value }}" checked="">
+                                                            <input type="radio" name="options[{{ count }}]" data-id="{{ option.id }}"
+                                                                   data-q_id="{{ question.id }}" value="{{ option.value }}"
+                                                                   checked="">
                                                             {{ option.text }}
                                                         </label>
                                                     </div>
@@ -69,6 +71,8 @@
                     </div>
                 </div>
                 <input id="score" name="score" type="hidden" value="">
+                <input id="options" type="hidden" name="options">
+                <input id="questions" type="hidden" name="questions">
             </form>
 
 
@@ -83,15 +87,20 @@
     <script>
         $('form').submit(function () {
 
+            var options = [];
+            var questions = [];
+
             var sum = 0;
             $('input[type="radio"]:checked').each(function () {
 
-                sum += parseInt($(this).val())
-
+                sum += parseInt($(this).val());
+                options.push($(this).data('id'));
+                questions.push($(this).data('q_id'));
             });
 
             $("#score").val(sum);
-
+            $("#options").val(options);
+            $("#questions").val(questions);
 
             return true;
 

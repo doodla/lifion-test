@@ -99,7 +99,7 @@
             <div class="col-xs-12">
                 <div class="panel panel-info">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Open Surveys</h3>
+                        <h3 class="panel-title">Requested Surveys</h3>
                     </div>
                     <div class="panel-body">
                         <table class="table table-striped table-hover table-responsive">
@@ -126,7 +126,7 @@
                                     </td>
                                 </tr>
                             {% empty %}
-                                <h4>There are no surveys open at this time.</h4>
+                                <h4>No Surveys available at this time.</h4>
                             {% endfor %}
                             </tbody>
                         </table>
@@ -177,7 +177,7 @@
                 $('.modal').modal('show');
 
 
-            })
+            });
 
             $('.datetimepicker').datetimepicker({
                 format: 'mm-dd-yyyy hh:ii',
