@@ -1,0 +1,142 @@
+{% extends 'lifion/base.html' %}
+{% load static %}
+{% block css %}
+    <style>
+        .right {
+            text-align: right;
+        }
+
+    </style>
+{% endblock %}
+
+
+{% block body %}
+    <div class="container">
+
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>Create Survey</h1>
+            </div>
+
+
+            <div class="col-xs-12" style="margin-top: 20px;margin-bottom: 10px;text-align: right">
+                <a class="btn btn-info" href="#add_question_modal" data-toggle="modal">New Question</a>
+            </div>
+
+            <div class="col-xs-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Questions</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="questions">
+                            {% for question in organization.question_bank.questions.all %}
+
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="well">
+                                            {{ question.text }}
+                                        </div>
+                                        <div class="col-xs-12">
+
+                                            {% for option in question.options.all %}
+
+                                                <div class="radio">
+                                                    <label>
+                                                        <input type="radio" disabled>
+                                                        {{ option.text }} [{{ option.value }}]
+                                                    </label>
+                                                </div>
+
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="add_question_modal" class="modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Add Question</h4>
+                        </div>
+                        <form id="add_question_form" action="{% url 'create_question' %}" method="post" class="form-horizontal">
+                            <div class="modal-body">
+
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="name" class="col-lg-2 control-label">Question Text</label>
+                                    <div class="col-lg-10">
+                                        <input required type="text" class="form-control" name="q_text" placeholder="Your Question Here" autocomplete="off"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-2 control-label">Options</label>
+                                    <div class="col-xs-4">
+                                        <input required type="text" class="form-control" name="text" placeholder="Text"/>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <input required type="number" min="1" max="5" class="form-control" name="points" placeholder="Points"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-xs-2 control-label">Options</label>
+                                    <div class="col-xs-4">
+                                        <input required type="text" class="form-control" name="text" placeholder="Text"/>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <input required type="number" min="1" max="5" class="form-control" name="points" placeholder="Points"/>
+                                    </div>
+                                    <div class="col-xs-1">
+                                        <button type="button" class="btn btn-default addButton"><span class="glyphicon glyphicon-plus"></span></button>
+                                    </div>
+                                </div>
+
+                                <!-- The template for adding new field -->
+                                <div class="form-group hide" id="optionTemplate">
+                                    <div class="col-xs-4 col-xs-offset-2">
+                                        <input type="text" class="form-control" placeholder="Text"/>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <input type="number" min="1" max="5" class="form-control" placeholder="Points"/>
+                                    </div>
+                                    <div class="col-xs-1">
+                                        <button type="button" class="btn btn-default removeButton"><span class="glyphicon glyphicon-minus"></span></button>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success">Add</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="create_survey" class="col-xs-12 right collapse">
+                <form method="post" action="{% url 'add_question_to_bank' organization_id=organization.id %}" class="form-horizontal">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <input id="questionArr" type="hidden" name="questions" value="">
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'lifion/js/questions.js' %}"></script>
+{% endblock %}

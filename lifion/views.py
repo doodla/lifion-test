@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
-from lifion.models import Organization, LifionUser, Survey, Question, Option, Submission
+from lifion.models import Organization, LifionUser, Survey, Question, Option, Submission, QuestionBank
 
 
 def index(request):
@@ -23,10 +23,6 @@ def record_response(request, survey_id):
     pass
 
 
-def manage_question_bank(request):
-    pass
-
-
 def manage_organizations(request):
     if request.method == 'POST':
 
@@ -36,6 +32,8 @@ def manage_organizations(request):
             name = request.POST.get('name')
 
             organization = Organization.objects.create(name=name)
+
+            QuestionBank.objects.create(organization=organization)
 
         elif action == 'delete':
             id = request.POST.get('id')
@@ -190,7 +188,8 @@ def create_survey(request):
             for pk in questions.split(','):
                 question = Question.objects.get(id=int(pk))
                 survey.questions.add(question)
-                survey.save()
+
+            survey.save()
 
             return redirect('survey')
 
@@ -266,6 +265,24 @@ def close_survey(request):
         return redirect('home')
 
 
+def view_question_bank(request):
+    orgs = Organization.objects.all()
+
+    return render(request, 'lifion/question_bank/view.html', {
+        'bank': True,
+        'organizations': orgs,
+    })
+
+
+def manage_question_bank(request, organization_id):
+    org = Organization.objects.get(id=organization_id)
+
+    return render(request, 'lifion/question_bank/manage.html', {
+        'bank': True,
+        'organization': org,
+    })
+
+
 @require_POST
 def create_question(request):
     q_text = request.POST.get('q_text')
@@ -290,3 +307,28 @@ def logout_user(request):
     logout(request)
     messages.success(request, 'Logged Out!')
     return redirect('employees')
+
+
+@require_POST
+def add_question_to_bank(request, organization_id):
+    questions = request.POST.get('questions')
+    organization = Organization.objects.get(id=organization_id)
+
+    question_bank = organization.question_bank
+    for pk in questions.split(','):
+        question = Question.objects.get(id=int(pk))
+        question_bank.questions.add(question)
+
+    question_bank.save()
+
+    return redirect('manage_question_bank', organization_id=organization_id)
+
+
+def remove_question_from_bank(request, organization_id, question_id):
+    question = Question.objects.get(id=question_id)
+    question_bank = QuestionBank.objects.get(organization=Organization.objects.get(id=organization_id))
+
+    question_bank.questions.remove(question)
+    question_bank.save()
+
+    return redirect('manage_question_bank', organization_id=organization_id)

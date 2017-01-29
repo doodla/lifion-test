@@ -34,6 +34,7 @@
                 {% if not request.user.is_authenticated %}
                     <li{% if orgs %} class="active"{% endif %}><a href="{% url 'organizations' %}">Organizations</a></li>
                     <li{% if emps %} class="active"{% endif %}><a href="{% url 'employees' %}">Employees</a></li>
+                    <li{% if bank %} class="active"{% endif %}><a href="{% url 'view_question_bank' %}">Question Bank</a></li>
                 {% else %}
                     <li{% if surves %} class="active"{% endif %}><a href="{% url 'survey' %}">Surveys</a></li>
                 {% endif %}

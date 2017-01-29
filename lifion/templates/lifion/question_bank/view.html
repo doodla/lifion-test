@@ -1,0 +1,59 @@
+{% extends 'lifion/base.html' %}
+{% load static %}
+{% block css %}
+    <style>
+
+    </style>
+{% endblock %}
+
+
+{% block body %}
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-xs-12">
+                <h1>Question Bank</h1>
+            </div>
+            {% if organizations %}
+
+                {% for organization in organizations %}
+                    <div class="col-xs-12">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">{{ organization.name }}</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div style="text-align: right">
+                                    <a href="{% url 'manage_question_bank' organization_id=organization.id %}" class="btn btn-info">Manage</a>
+                                </div>
+                                {% for question in organization.question_bank.questions.all %}
+                                    <div class="well well-sm">
+                                        {{ question.text }}
+                                    </div>
+                                {% empty %}
+                                    <h4>Nothing here yet. Go to the management page to add some!</h4>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            {% else %}
+                <div class="col-xs-12 text-center">
+                    <h3>There's no <a href="{% url 'organizations' %}">organization</a> for a question bank!</h3>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+
+
+    </script>
+{% endblock %}

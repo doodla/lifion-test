@@ -27,7 +27,7 @@ $(document).ready(function () {
 
 
             if (optionIndex == (MAX_OPTIONS - 1))
-                $('#add_question_form').find('.addButton').attr('disabled', 'disabled');
+                $form.find('.addButton').attr('disabled', 'disabled');
         })
         .on('click', '.removeButton', function () {
             var $row = $(this).parents('.form-group');
@@ -95,7 +95,7 @@ $(document).ready(function () {
         }
 
 
-        replacements = {
+        var replacements = {
             '%RADIOS%': radioHtml,
             '%QTEXT%': $('input[name="q_text"]').val()
         };
@@ -112,7 +112,6 @@ $(document).ready(function () {
 
     $form.submit(function () {
 
-        console.log($form.attr('action'));
         $.post($form.attr('action'), $form.serialize(), function (json) {
 
             var q_id = json['q_id'];
@@ -135,7 +134,7 @@ $(document).ready(function () {
 
         }, 'json');
 
-        $("#add_question_modal").modal('hide');
+        $form.modal('hide');
         return false;
 
     });

@@ -32,6 +32,10 @@ urlpatterns = [
     url(r'^survey/view/(?P<survey_id>[0-9]+)$', views.view_survey, name='view_survey'),
     url(r'^survey/response/(?P<survey_id>[0-9]+)[/]$', views.survey_response, name='survey_responses'),
     url(r'^survey/close[/]$', views.close_survey, name='close_survey'),
+    url(r'^question-bank[/]$', views.view_question_bank, name='view_question_bank'),
+    url(r'^question-bank/manage/(?P<organization_id>[0-9]+)[/]$', views.manage_question_bank, name='manage_question_bank'),
+    url(r'^question-bank/remove/(?P<organization_id>[0-9]+)/(?P<question_id>[0-9]+)[/]$', views.remove_question_from_bank, name='remove_question_from_bank'),
+    url(r'^question-bank/add/(?P<organization_id>[0-9]+)$', views.add_question_to_bank, name='add_question_to_bank'),
     url(r'^questions/create[/]$', views.create_question, name='create_question'),
 ]
 
