@@ -112,6 +112,7 @@ class Option(models.Model):
 class Survey(models.Model):
     user = models.ForeignKey(LifionUser, related_name='surveys', on_delete=CASCADE)
     organization = models.ForeignKey(Organization, related_name='surveys', on_delete=CASCADE)
+    submitters = models.ManyToManyField(LifionUser, related_name='requested_surveys')
     questions = models.ManyToManyField(Question, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_open = models.BooleanField(default=True)

@@ -156,6 +156,20 @@
             <div id="create_survey" class="col-xs-12 right collapse">
                 <form method="post" action="{% url 'create_survey' %}" class="form-horizontal">
                     {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="select" class="col-lg-2 control-label">Choose Submitters</label>
+                        <div class="col-lg-10">
+                            <select name="submitters" multiple="" class="form-control">
+                                {% for employee in request.user.organization.employees.all %}
+                                    {% if employee != request.user %}
+                                        <option value="{{ employee.id }}">{{ employee.full_name }} ({{ employee.username }})</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Create</button>
                     <input id="questionArr" type="hidden" name="questions" value="">
                 </form>

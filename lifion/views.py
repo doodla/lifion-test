@@ -101,8 +101,6 @@ def manage_surveys(request):
 
         user = request.user
 
-        organization = request.user.organization
-
         start = request.GET.get('start', None)
         end = request.GET.get('end', None)
 
@@ -113,7 +111,7 @@ def manage_surveys(request):
         else:
             user_surveys = Survey.objects.filter(user=user).annotate(score=Sum('submissions__score'))
 
-        other_surveys = Survey.objects.filter(organization=organization, is_open=True).exclude(user=user)
+        other_surveys = user.requested_surveys.all()
 
         total = user_surveys.aggregate(Sum('score')).get('score__sum', 0)
 
@@ -179,6 +177,7 @@ def create_survey(request):
         user = request.user
         if request.method == 'POST':
             questions = request.POST.get('questions')
+            submitters = request.POST.getlist('submitters')
 
             survey = Survey.objects.create(
                 user=user,
@@ -190,6 +189,10 @@ def create_survey(request):
                 question = Question.objects.get(id=int(pk))
                 survey.questions.add(question)
 
+            for pk in submitters:
+                submitter = LifionUser.objects.get(id=int(pk))
+                survey.submitters.add(submitter)
+
             survey.save()
 
             return redirect('survey')
@@ -198,6 +201,10 @@ def create_survey(request):
         question_bank = user.organization.question_bank
         if survey is not None:
             messages.error(request, 'You can only have one survey open at a time.')
+            return redirect('survey')
+
+        if user.organization.employees.all().count() == 1:
+            messages.error(request, 'You\'re the only employee in your organization! Who\'s the survey for?')
             return redirect('survey')
 
         return render(request, 'lifion/survey/create.html', {
