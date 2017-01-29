@@ -50,7 +50,7 @@
                                     <th># of Responses</th>
                                     <th>Manage</th>
                                     <th>Responses</th>
-                                    <th>Score</th>
+                                    <th>Avg</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -73,7 +73,7 @@
                                             <a href="{% url 'survey_responses' survey_id=survey.id %}" class="btn btn-info"><span
                                                     class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a>
                                         </td>
-                                        <td>{% if survey.score %}{{ survey.score }}{% else %}0{% endif %}</td>
+                                        <td>{% if survey.avg %}{{ survey.avg }}{% else %}0{% endif %}</td>
                                     </tr>
                                 {% empty %}
                                     <h4>Get started by Creating a Survey on the top right!</h4>

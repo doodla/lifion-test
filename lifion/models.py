@@ -126,6 +126,7 @@ class Submission(models.Model):
     user = models.ForeignKey(LifionUser, on_delete=CASCADE, blank=True, null=True)
     comment = models.TextField(default='')
     score = models.IntegerField(default=0)
+    avg = models.DecimalField(default=0.0, max_digits=3, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     anonymous = models.BooleanField(default=False)
 

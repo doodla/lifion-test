@@ -1,7 +1,9 @@
 from datetime import datetime
+from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
+from django.db.models import Avg
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -107,13 +109,13 @@ def manage_surveys(request):
         if start is not None:
             start = datetime.strptime(start, '%m-%d-%Y %H:%M')
             end = datetime.strptime(end, '%m-%d-%Y %H:%M')
-            user_surveys = Survey.objects.filter(user=user, created_at__gte=start, created_at__lte=end).annotate(score=Sum('submissions__score'))
+            user_surveys = Survey.objects.filter(user=user, created_at__gte=start, created_at__lte=end).annotate(avg=Avg('submissions__avg'))
         else:
-            user_surveys = Survey.objects.filter(user=user).annotate(score=Sum('submissions__score'))
+            user_surveys = Survey.objects.filter(user=user).annotate(avg=Avg('submissions__avg'))
 
-        other_surveys = user.requested_surveys.all()
+        other_surveys = user.requested_surveys.filter(is_open=True)
 
-        total = user_surveys.aggregate(Sum('score')).get('score__sum', 0)
+        total = user_surveys.aggregate(Avg('avg')).get('avg__avg', 0)
 
         return render(request, 'lifion/survey/manage.html', {
             'user_surveys': user_surveys,
@@ -135,6 +137,8 @@ def take_survey(request, survey_id):
             comment = request.POST.get('comment')
             check = request.POST.get('anonymous', None)
 
+            avg = Decimal(score) / Decimal(survey.questions.all().count())
+
             if check is not None:
                 anonymous = True
             else:
@@ -144,7 +148,8 @@ def take_survey(request, survey_id):
                                       survey=survey,
                                       anonymous=anonymous,
                                       score=score,
-                                      comment=comment)
+                                      avg=avg,
+                                      comment=comment, )
 
             messages.success(request, 'Response submitted.')
             return redirect('survey')
@@ -238,13 +243,15 @@ def survey_response(request, survey_id):
         survey = Survey.objects.filter(id=survey_id).first()
 
         total = survey.submissions.aggregate(Sum('score')).get('score__sum', 0)
+        avg = survey.submissions.aggregate(Avg('avg')).get('avg__avg', 0.0)
 
         if survey is not None:
 
             return render(request, 'lifion/survey/response.html', {
                 'surves': True,
                 'survey': survey,
-                'total': total
+                'total': total,
+                'avg' : avg
             })
 
         else:
