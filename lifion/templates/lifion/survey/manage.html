@@ -21,7 +21,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title" style="display: inline-block">Your Surveys</h3>
                         <div class="pull-right" style="display: inline-block;">
-                            <a href="{% url 'create_survey' %}" style="color: #fffccf;">Create Survey</a>
+                            <a class="btn btn-info" href="{% url 'create_survey' %}" style="color: #fffccf;">Create Survey</a>
                         </div>
                     </div>
                     <div class="panel-body">
@@ -75,6 +75,8 @@
                                         </td>
                                         <td>{% if survey.score %}{{ survey.score }}{% else %}0{% endif %}</td>
                                     </tr>
+                                {% empty %}
+                                    <h4>Get started by Creating a Survey on the top right!</h4>
                                 {% endfor %}
                                 </tbody>
                                 <tfoot>
@@ -123,6 +125,8 @@
                                         {% endif %}
                                     </td>
                                 </tr>
+                            {% empty %}
+                                <h4>There are no surveys open at this time.</h4>
                             {% endfor %}
                             </tbody>
                         </table>

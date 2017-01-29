@@ -36,9 +36,9 @@ def manage_organizations(request):
             QuestionBank.objects.create(organization=organization)
 
         elif action == 'delete':
-            id = request.POST.get('id')
+            organization_id = request.POST.get('id')
 
-            organization = Organization.objects.get(id=id)
+            organization = Organization.objects.get(id=organization_id)
             organization.delete()
 
     orgs = Organization.objects.all()
@@ -93,7 +93,7 @@ def manage_employees(request):
             'organizations': orgs,
             'emps': True
         })
-    return redirect('home')
+    return redirect('survey')
 
 
 def manage_surveys(request):
@@ -185,7 +185,8 @@ def create_survey(request):
                 organization=user.organization,
             )
 
-            for pk in questions.split(','):
+            questions = list(set(questions.split(',')))
+            for pk in questions:
                 question = Question.objects.get(id=int(pk))
                 survey.questions.add(question)
 
@@ -194,13 +195,14 @@ def create_survey(request):
             return redirect('survey')
 
         survey = Survey.objects.filter(user=user, is_open=True).first()
-
+        question_bank = user.organization.question_bank
         if survey is not None:
             messages.error(request, 'You can only have one survey open at a time.')
             return redirect('survey')
 
         return render(request, 'lifion/survey/create.html', {
-            'surves': True
+            'surves': True,
+            'question_bank': question_bank,
         })
     else:
         return redirect('home')

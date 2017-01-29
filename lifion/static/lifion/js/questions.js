@@ -34,7 +34,7 @@ $(document).ready(function () {
 
 
             if (optionIndex < MAX_OPTIONS) {
-                $('#add_question_form').find('.addButton').removeAttr('disabled');
+                $form.find('.addButton').removeAttr('disabled');
             }
 
             // Remove element containing the fields
@@ -134,7 +134,7 @@ $(document).ready(function () {
 
         }, 'json');
 
-        $form.modal('hide');
+        $("#add_question_modal").modal('hide');
         return false;
 
     });

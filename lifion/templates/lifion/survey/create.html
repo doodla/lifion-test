@@ -26,7 +26,7 @@
                 <ul class="dropdown-menu pull-right">
                     <li><a href="#add_question_modal" data-toggle="modal">New Question</a></li>
                     <li role="separator" class="divider"></li>
-                    <li><a href="#">From Question Bank</a></li>
+                    <li><a href="#question_bank_modal" data-toggle="modal">From Question Bank</a></li>
                 </ul>
             </div>
 
@@ -107,6 +107,52 @@
                 </div>
             </div>
 
+            <div id="question_bank_modal" class="modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Question Bank</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            {% for question in question_bank.questions.all %}
+
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+
+                                        <div class="well">
+                                            <input value="{{ question.id }}" name="qb" type="radio" style="cursor: pointer" checked>
+                                            {{ question.text }}
+                                        </div>
+                                        <div class="col-xs-12">
+
+                                            {% for option in question.options.all %}
+
+                                                <div class="radio">
+                                                    <label>
+                                                        <input type="radio" disabled>
+                                                        {{ option.text }} [{{ option.value }}]
+                                                    </label>
+                                                </div>
+
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" id="qb_btn" class="btn btn-success">Add</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
             <div id="create_survey" class="col-xs-12 right collapse">
                 <form method="post" action="{% url 'create_survey' %}" class="form-horizontal">
                     {% csrf_token %}
@@ -122,4 +168,38 @@
 
 {% block js %}
     <script src="{% static 'lifion/js/questions.js' %}"></script>
+    <script>
+        $("#qb_btn").click(function () {
+
+            var $modal = $("#question_bank_modal")
+
+            var $checked = $modal.find("input:checked");
+
+            var q_id = $checked.val();
+            //Get question id
+
+            //Get current list of questions
+            var $questionArr = $("#questionArr");
+
+            var arr = [];
+            if ($questionArr.val() != '') {
+                arr = $questionArr.val().split(',');
+            }
+            arr.push(q_id);
+
+            $questionArr.val(arr);
+
+            var $questions = $("#questions");
+
+            var $question = $checked.parents('.panel-default');
+
+            var $clone = $question.clone();
+
+            $clone.find('input:checked').hide().attr('disabled', 'disabled');
+            $questions.append($clone);
+
+            $modal.modal('hide');
+
+        })
+    </script>
 {% endblock %}

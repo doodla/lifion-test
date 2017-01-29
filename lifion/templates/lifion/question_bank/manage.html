@@ -34,8 +34,12 @@
 
                                 <div class="panel panel-default">
                                     <div class="panel-body">
-                                        <div class="well">
+                                        <div class="well clearfix">
                                             {{ question.text }}
+
+                                            <a class="btn btn-danger pull-right" href="{% url 'remove_question_from_bank' organization_id=organization.id question_id=question.id %}">
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                            </a>
                                         </div>
                                         <div class="col-xs-12">
 
