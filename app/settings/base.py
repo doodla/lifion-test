@@ -171,4 +171,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Django-Compressor
-COMPRESS_ENABLED = True
+COMPRESS_ENABLED = False
