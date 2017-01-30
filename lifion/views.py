@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.db.models import Avg
+from django.db.models import Max
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -105,9 +106,9 @@ def manage_surveys(request):
         if start is not None:
             start = datetime.strptime(start, '%m-%d-%Y %H:%M')
             end = datetime.strptime(end, '%m-%d-%Y %H:%M')
-            user_surveys = Survey.objects.filter(user=user, created_at__gte=start, created_at__lte=end).annotate(avg=Avg('submissions__avg'))
+            user_surveys = Survey.objects.filter(user=user, created_at__gte=start, created_at__lte=end).annotate(avg=Avg('submissions__responses__weighted_score'))
         else:
-            user_surveys = Survey.objects.filter(user=user).annotate(avg=Avg('submissions__avg'))
+            user_surveys = Survey.objects.filter(user=user).annotate(avg=Avg('submissions__responses__weighted_score'))
 
         other_surveys = user.requested_surveys.filter()
 
@@ -129,13 +130,10 @@ def take_survey(request, survey_id):
         survey = Survey.objects.get(id=survey_id)
 
         if request.method == 'POST':
-            score = request.POST.get('score')
             comment = request.POST.get('comment')
             check = request.POST.get('anonymous', None)
             options = request.POST.get('options').split(',')
             questions = request.POST.get('questions').split(',')
-
-            avg = Decimal(score) / Decimal(len(questions))
 
             if check is not None:
                 anonymous = True
@@ -145,14 +143,22 @@ def take_survey(request, survey_id):
             submission = Submission.objects.create(user=request.user,
                                                    survey=survey,
                                                    anonymous=anonymous,
-                                                   score=score,
-                                                   avg=avg,
                                                    comment=comment)
 
             for pq, po in zip(questions, options):
+                question = Question.objects.get(id=int(pq))
+                option = Option.objects.get(id=int(po))
+
+                max_val = question.options.aggregate(Max('value')).get('value__max')
+
+                val = option.value
+
+                weighted_score = (Decimal(val) / Decimal(max_val)) * 5
+
                 QuestionResponse.objects.create(submission=submission,
-                                                option=Option.objects.get(id=int(po)),
-                                                question=Question.objects.get(id=int(pq)))
+                                                option=option,
+                                                question=question,
+                                                weighted_score=weighted_score)
 
             messages.success(request, 'Response submitted.')
             return redirect('survey')
@@ -255,15 +261,13 @@ def survey_response(request, survey_id):
 
         survey = Survey.objects.filter(id=survey_id).first()
 
-        total = survey.submissions.aggregate(Sum('score')).get('score__sum', 0)
-        avg = survey.submissions.aggregate(Avg('avg')).get('avg__avg', 0.0)
+        avg = survey.submissions.aggregate(Avg('responses__weighted_score')).get('responses__weighted_score__avg',0)
 
         if survey is not None:
 
             return render(request, 'lifion/survey/response.html', {
                 'surves': True,
                 'survey': survey,
-                'total': total,
                 'avg': avg
             })
 

@@ -125,8 +125,6 @@ class Submission(models.Model):
     survey = models.ForeignKey(Survey, on_delete=CASCADE, related_name='submissions')
     user = models.ForeignKey(LifionUser, on_delete=CASCADE, blank=True, null=True)
     comment = models.TextField(default='')
-    score = models.IntegerField(default=0)
-    avg = models.DecimalField(default=0.0, max_digits=3, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     anonymous = models.BooleanField(default=False)
 
@@ -138,6 +136,17 @@ class Submission(models.Model):
         else:
             return self.user.full_name
 
+    @property
+    def avg_weighted_score(self):
+
+        responses = self.responses.all()
+
+        total = sum(response.weighted_score for response in responses)
+
+        avg = total/len(responses)
+
+        return avg
+
     class Meta:
         db_table = "submission"
 
@@ -146,6 +155,7 @@ class QuestionResponse(models.Model):
     option = models.ForeignKey(Option, on_delete=CASCADE)
     question = models.ForeignKey(Question, on_delete=CASCADE)
     submission = models.ForeignKey(Submission, related_name='responses', on_delete=CASCADE)
+    weighted_score = models.DecimalField(default=0.0, max_digits=3, decimal_places=2)
 
     class Meta:
         db_table = "question_response"

@@ -35,8 +35,7 @@
                                 <th>Submitted At</th>
                                 <th>Comment</th>
                                 <th>View Response</th>
-                                <th>Score</th>
-                                <th>Avg</th>
+                                <th>Weighted Score (out of 5)</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -47,8 +46,7 @@
                                     <td>{{ response.created_at }}</td>
                                     <td>{{ response.comment }}</td>
                                     <td><a href="#!" class="viewResponseBtn btn btn-info" data-id="{{ response.id }}">View</a></td>
-                                    <td>{{ response.score }}</td>
-                                    <td>{{ response.avg }}</td>
+                                    <td>{{ response.avg_weighted_score }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -58,7 +56,7 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td><strong>{{ total }}</strong></td>
+                                <td></td>
                                 <td><strong>{{ avg }}</strong></td>
                             </tr>
                             </tfoot>
