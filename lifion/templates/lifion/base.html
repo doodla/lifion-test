@@ -1,10 +1,12 @@
+{% load static %}
+{% load compress %}
+{% load google_analytics %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
-    {% load compress %}
+
     <meta charset="UTF-8">
-    <title>Lifion</title>
+    <title>Lifion Feedback</title>
 
     <link rel="icon" href="{% static 'lifion/assets/favicon.ico' %}">
 
@@ -14,6 +16,8 @@
         {% block css %}
         {% endblock %}
     {% endcompress %}
+
+{% google_analytics %}
 </head>
 <body>
 
@@ -25,7 +29,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Lifion</a>
+            <a class="navbar-brand" href="#">Lifion Feedback App</a>
         </div>
 
         <div class="collapse navbar-collapse" id="navbar">

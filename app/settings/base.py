@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'compressor',
     'lifion',
+    'analytical'
 ]
 
 MIDDLEWARE = [
@@ -172,3 +173,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Django-Compressor
 COMPRESS_ENABLED = False
+
+GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-91117338-2'
