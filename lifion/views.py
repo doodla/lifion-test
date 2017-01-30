@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.db.models import Avg
 from django.db.models import Max
-from django.db.models import Sum
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -106,7 +105,8 @@ def manage_surveys(request):
         if start is not None:
             start = datetime.strptime(start, '%m-%d-%Y %H:%M')
             end = datetime.strptime(end, '%m-%d-%Y %H:%M')
-            user_surveys = Survey.objects.filter(user=user, created_at__gte=start, created_at__lte=end).annotate(avg=Avg('submissions__responses__weighted_score'))
+            user_surveys = Survey.objects.filter(user=user, created_at__gte=start, created_at__lte=end).annotate(
+                avg=Avg('submissions__responses__weighted_score'))
         else:
             user_surveys = Survey.objects.filter(user=user).annotate(avg=Avg('submissions__responses__weighted_score'))
 
@@ -167,6 +167,10 @@ def take_survey(request, survey_id):
 
         if submission is not None:
             messages.error(request, 'You\'ve already submitted your response to this survey!')
+            return redirect('survey')
+
+        if not survey.is_open:
+            messages.error(request, 'The survey has closed.')
             return redirect('survey')
 
         return render(request, 'lifion/survey/take.html', {
@@ -261,7 +265,7 @@ def survey_response(request, survey_id):
 
         survey = Survey.objects.filter(id=survey_id).first()
 
-        avg = survey.submissions.aggregate(Avg('responses__weighted_score')).get('responses__weighted_score__avg',0)
+        avg = survey.submissions.aggregate(Avg('responses__weighted_score')).get('responses__weighted_score__avg', 0)
 
         if survey is not None:
 

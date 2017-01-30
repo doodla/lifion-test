@@ -188,8 +188,8 @@
 
             var $checked = $modal.find("input:checked");
 
-            var q_id = $checked.val();
             //Get question id
+            var q_id = $checked.val();
 
             //Get current list of questions
             var $questionArr = $("#questionArr");
@@ -210,6 +210,7 @@
 
             $clone.find('input:checked').hide().attr('disabled', 'disabled');
             $questions.append($clone);
+            $("#create_survey").show();
 
             $modal.modal('hide');
 

@@ -1,10 +1,116 @@
 {% extends 'lifion/base.html' %}
-
+{% load static %}
 {% block css %}
+
+    <link rel="stylesheet" href="{% static 'lifion/css/featherlight.min.css' %}">
+    <link rel="stylesheet" href="{% static 'lifion/css/solarized-light.css' %}">
 {% endblock %}
 
 {% block body %}
+    <div class="container">
+
+        <div class="col-xs-12">
+            <h3>Problem Statement</h3>
+            <div class="well">
+                Design a peer feedback application where a given user in an organization can request feedback from other users in the same organization.
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <h3>Solution</h3>
+
+            <br>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>ERD Diagram & Demo</h4>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <a href="#!" data-featherlight="{% static 'lifion/assets/image.png' %}"><img src="{% static 'lifion/assets/image.png' %}"
+                                                                                                         style="max-width: 300px;" alt=""></a>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <video controls style="width: 100%">
+                                <source src="{% static 'lifion/assets/video.mp4' %}">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <h4>Query</h4>
+
+                    <p>
+                        I cannot narrow down to a specific user submission without additional parameters. This query gets all the questions,responses and user
+                        details for a given survey.
+                    </p>
+                    <pre style="padding: 0">
+                            <code class="sql">
+    SELECT
+      question.text,
+      option.text,
+      users.first_name,
+      users.last_name,
+      submission.comment
+    FROM survey
+      JOIN submission ON survey.id = submission.survey_id
+      JOIN survey_submitters ON submission.user_id = survey_submitters.id
+      JOIN users ON submission.user_id = users.id
+      JOIN question_response ON submission.id = question_response.submission_id
+      JOIN question ON question_response.question_id = question.id
+      JOIN option ON question_response.option_id = option.id
+    WHERE survey.id = 1
+                            </code>
+                        </pre>
+                </div>
+
+                <div class="panel-body">
+                    <h4>Algorithm</h4>
+
+                    <p>
+                        When a survey response is recorded, I'm calculating the weighted average score per question and storing it.
+                    </p>
+
+                    <p>
+                        The score is calculated as the ratio of the points for the selected option to the maximum points for any option in that question,
+                        multiplied by 5(To get everything on a 1-5 scale).
+                    </p>
+
+                    <p class="text-center">
+                        <code>
+                            (selected_option_points/max_points)*5
+                        </code>
+                    </p>
+
+                    <p>
+                        I use average this to get the average score <strong>per submission</strong> on a scale of <strong>1-5</strong>. And I average the
+                        outcome to get the average weighted mean for <strong>all submitters</strong>.
+                    </p>
+
+                    <p>
+                        The average score is visible on the Survey Management page when your survey has some responses.
+                    </p>
+
+                    <h4>Assumptions</h4>
+
+                    <ul>
+                        <li>All options are on a 1-5 scale.</li>
+                        <li>Comments do not have any score associated with them.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="height: 100px"></div>
 {% endblock %}
 
 {% block js %}
+    <script src="{% static 'lifion/js/highlight.pack.js' %}"></script>
+    <script src="{% static 'lifion/js/featherlight.min.js' %}"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
 {% endblock %}

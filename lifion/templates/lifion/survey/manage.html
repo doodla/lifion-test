@@ -73,7 +73,7 @@
                                             <a href="{% url 'survey_responses' survey_id=survey.id %}" class="btn btn-info"><span
                                                     class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a>
                                         </td>
-                                        <td>{% if survey.avg %}{{ survey.avg }}{% else %}0{% endif %}</td>
+                                        <td>{% if survey.avg %}{{ survey.avg|floatformat }}{% else %}0{% endif %}</td>
                                     </tr>
                                 {% empty %}
                                     <h4>Get started by Creating a Survey on the top right!</h4>
@@ -87,7 +87,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td><strong>{{ total }}</strong></td>
+                                    <td><strong>{{ total|floatformat }}</strong></td>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -119,7 +119,11 @@
                                     <td>{{ survey.user.full_name }}</td>
                                     <td>
                                         {% if not request.user|has_submission:survey %}
-                                            <a href="{% url 'take_survey' survey_id=survey.id %}" class="btn btn-info btn-block">Take Survey</a>
+                                            {% if survey.is_open %}
+                                                <a href="{% url 'take_survey' survey_id=survey.id %}" class="btn btn-info btn-block">Take Survey</a>
+                                            {% else %}
+                                                Survey Closed
+                                            {% endif %}
                                         {% else %}
                                             Submitted
                                         {% endif %}
