@@ -14,4 +14,4 @@ if SITE_PREFIX:
     SESSION_COOKIE_PATH = '/{}'.format(SITE_PREFIX)
     LOGIN_REDIRECT_URL = '/{}/'.format(SITE_PREFIX)
     LOGIN_URL = '/{}/accounts/login/'.format(SITE_PREFIX)
-    LOGOUT_URL = '/{}}/accounts/logout/'.format(SITE_PREFIX)
+    LOGOUT_URL = '/{}/accounts/logout/'.format(SITE_PREFIX)
