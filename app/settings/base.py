@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 from .secret import *
 
-APP_NAME = ENVIRONMENT['project']
+APP_NAME = 'lifion'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -101,7 +101,7 @@ LOGGING = {
         'default': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/' + ENVIRONMENT['project'] + '.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/' + APP_NAME + '.log'),
             'maxBytes': 1024 * 1024 * 2,  # 5 MB
             'backupCount': 5,
             'formatter': 'standard',
@@ -109,7 +109,7 @@ LOGGING = {
         'request_handler': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/' + ENVIRONMENT['project'] + '_requests.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/' + APP_NAME + '_requests.log'),
             'maxBytes': 1024 * 1024 * 3,  # 5 MB
             'backupCount': 5,
             'formatter': 'standard',
