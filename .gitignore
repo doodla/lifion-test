@@ -62,3 +62,5 @@ target/
 *development.py
 *dev_postgres.py
 *dev_sqlite.py
+.DS_Store
+*.cpgz
